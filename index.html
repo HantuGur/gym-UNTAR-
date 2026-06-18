@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sistem Admin Gym</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="hero">
+      <div>
+        <p class="eyebrow">Admin Check-in</p>
+        <h1 id="gymName">SISTEM FC</h1>
+        <p class="subtitle">Input pelanggan dari HP/laptop. Data audit otomatis masuk ke Google Sheet.</p>
+      </div>
+      <div class="hero-status">
+        <div class="clock" id="clockText">--:--:--</div>
+        <div class="date" id="dateText">Memuat tanggal...</div>
+        <div class="backend-pill" id="backendStatus">Cek backend...</div>
+      </div>
+    </header>
+
+    <main class="grid-main">
+      <section class="card form-card">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Input Data</p>
+            <h2>Catat Masuk / Keluar</h2>
+          </div>
+          <button class="ghost-btn" type="button" id="clearBtn">Bersihkan</button>
+        </div>
+
+        <form id="checkForm" autocomplete="off">
+          <div class="field">
+            <label for="adminInput">Nama Admin / Pegawai</label>
+            <input id="adminInput" name="admin" type="text" placeholder="Contoh: Rani" required />
+          </div>
+
+          <div class="field">
+            <label for="customerInput">Nama Pelanggan</label>
+            <input id="customerInput" name="customerName" type="text" placeholder="Contoh: Budi Santoso" required />
+          </div>
+
+          <div class="form-row three-cols">
+            <div class="field">
+              <label for="keyTypeInput">Jenis Kunci</label>
+              <select id="keyTypeInput" name="keyType" required>
+                <option value="Cowo">Cowo</option>
+                <option value="Cewe">Cewe</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="keyInput">Nomor Kunci</label>
+              <input id="keyInput" name="keyNumber" type="number" min="1" placeholder="Contoh: 12" required />
+            </div>
+
+            <div class="field">
+              <label for="statusInput">Status</label>
+              <select id="statusInput" name="status" required>
+                <option value="Masuk">Masuk</option>
+                <option value="Keluar">Keluar</option>
+              </select>
+            </div>
+          </div>
+
+          <button class="primary-btn" type="submit" id="submitBtn">Simpan ke Google Sheet</button>
+        </form>
+
+        <div class="hint-box">
+          <b>Audit aman:</b> setiap klik simpan akan menambah baris baru di LOG_GYM, bukan menghapus data lama.
+        </div>
+      </section>
+
+      <aside class="side-stack">
+        <section class="card stats-card">
+          <p class="eyebrow">Dashboard</p>
+          <h2>Ringkasan Hari Ini</h2>
+          <div class="stats-grid">
+            <div class="stat-item">
+              <span>Total Kunci</span>
+              <strong id="totalKeys">0</strong>
+            </div>
+            <div class="stat-item danger">
+              <span>Dipakai</span>
+              <strong id="usedKeys">0</strong>
+            </div>
+            <div class="stat-item success">
+              <span>Kosong</span>
+              <strong id="emptyKeys">0</strong>
+            </div>
+            <div class="stat-item purple">
+              <span>Member Lifetime</span>
+              <strong id="memberCount">0</strong>
+            </div>
+          </div>
+          <p class="refresh-note" id="refreshNote">Auto-refresh aktif.</p>
+          <p class="last-update">Update terakhir: <span id="lastUpdate">-</span></p>
+        </section>
+
+        <section class="card config-warning hidden" id="configWarning">
+          <p class="eyebrow">Perlu Setting</p>
+          <h2>URL Backend Belum Diisi</h2>
+          <p>Edit file <code>config.js</code>, lalu isi <code>SCRIPT_URL</code> dengan URL Apps Script yang berakhiran <code>/exec</code>.</p>
+        </section>
+      </aside>
+    </main>
+
+    <section class="card monitor-card">
+      <div class="monitor-head">
+        <div>
+          <p class="eyebrow">Monitoring</p>
+          <h2 id="monitorTitle">Daftar Kunci</h2>
+        </div>
+        <div class="tabs">
+          <button class="tab active" type="button" data-tab="keys">Daftar Kunci</button>
+          <button class="tab" type="button" data-tab="members">Member Lifetime</button>
+          <button class="tab" type="button" data-tab="logs">Audit Terakhir</button>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <input id="searchInput" type="search" placeholder="Cari jenis / no kunci / nama / admin" />
+        <select id="filterStatus">
+          <option value="all">Semua Status</option>
+          <option value="Dipakai">Dipakai</option>
+          <option value="Kosong">Kosong</option>
+          <option value="Masuk">Masuk</option>
+          <option value="Keluar">Keluar</option>
+        </select>
+        <button class="ghost-btn" type="button" id="refreshBtn">Refresh</button>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead id="tableHead"></thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
+
+      <div class="empty-state hidden" id="emptyState">Belum ada data.</div>
+    </section>
+  </div>
+
+  <div class="toast hidden" id="toast"></div>
+  <iframe id="postFrame" name="postFrame" class="hidden-frame" title="post frame"></iframe>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
